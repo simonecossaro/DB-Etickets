@@ -495,7 +495,7 @@ VALUES (null,'2022-06-14','15:00','Stadio Castellani','Serie A','Empoli','Salern
        (null,'2022-06-15','20:00','Mediolanum Forum','LegaBasketA','Olimpia Milano','Allianz Trieste',33),
        (null,'2022-06-17','18:00','Mediolanum Forum','LegaBasketA','Olimpia Milano','Allianz Trieste',34),
        (null,'2022-06-19','20:00','Allianz Dome','LegaBasketA','Allianz Trieste','Olimpia Milano',35),
-       (null,'2022-06-02','19:30','Stade de France','Amichevole','Paris Saint Germain','Chelsea',91);
+       (null,'2022-06-02','19:30','Stade de France','Amichevole','Paris Saint Germain','Chelsea',91),
        (null,'2022-06-21','19:30','Kioene Arena','SuperLega','Kioene Padova','Callipo Calabria Vibo Valentia',92),
        (null,'2022-06-21','20:30','Mediolanum Forum','SuperLega','Allianz Milano','Cucine Lube Civitanova',93),
        (null,'2022-06-21','20:00','PalaMazzola','SuperLega','Prisma Taranto','Bluenergy Piacenza',94),
@@ -559,7 +559,7 @@ VALUES (null,'2022-06-14','20:00','Mediolanum Forum','Eminem',36),
        (null,'2022-08-03','20:00','Stadio Olimpico','AC-DC',87),
        (null,'2022-08-26','20:30','Stadio Renato Dall''Ara','U2',88),
        (null,'2022-10-01','21:30','Arena Verona','Vasco Rossi',89),
-       (null,'2022-09-10','20:00','Stadio San Siro','Rolling Stones',90);
+       (null,'2022-09-10','20:00','Stadio San Siro','Rolling Stones',90),
        (null,'2022-06-03','21:00','Arena Verona','Coldplay',98),
        (null,'2022-06-05','21:30','Unipol Arena','U2',99);
 
