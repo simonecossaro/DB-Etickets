@@ -228,7 +228,7 @@ BEGIN
   SELECT count(*) INTO @x FROM spettatore WHERE (month(datanascita) = month(now()) AND day(datanascita) = day(now()));
   IF (@x = 0) THEN signal sqlstate '45101' SET message_text = 'Nessun risultato trovato';
   END IF;
-  SELECT nome, cognome, email, telefono FROM spettatore
+  SELECT nome, cognome, datanascita, email, telefono FROM spettatore
   WHERE month(datanascita) = month(now()) AND day(datanascita) = day(now());
 END;$$
 DELIMITER;
