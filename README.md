@@ -339,6 +339,17 @@ BEGIN
 END; $$
 DELIMITER;
 
+DELIMITER $$
+CREATE PROCEDURE sp_deleteVecchiBiglietti()
+BEGIN
+    DELETE FROM biglietto
+    WHERE id IN
+  (SELECT biglietto FROM partita WHERE data < now()
+    UNION
+    SELECT biglietto FROM concerto WHERE data < now());
+END;$$
+DELIMITER;
+
 INSERT INTO arena
 VALUES ('Stadio Diego Armando Maradona','via Insigne',2,'Napoli',54726,'Aperto'),
 ('Stadio San Nicola','via S.Nicola',11,'Bari',58270,'Aperto'),
