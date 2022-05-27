@@ -21,11 +21,13 @@ CREATE TABLE arena(
      CONSTRAINT check_cap_arena CHECK (capienza > 0)
 );
 
-CREATE TABLE cantante(
+CREATE TABLE artista(
      nome varchar(45),
      genere varchar(45) NOT NULL,
+     tipo varchar(45) NOT NULL,
      nazionalità varchar(45) NOT NULL,
-     PRIMARY KEY (nome)
+     PRIMARY KEY (nome),
+     CONSTRAINT check_tip_artista CHECK (tipo = 'Cantante' OR tipo = 'Band')
 );
 
 CREATE TABLE spettatore(
@@ -84,7 +86,7 @@ CREATE TABLE concerto(
      biglietto int(11) UNIQUE,
      PRIMARY KEY (id),
      CONSTRAINT FK_arena_conc FOREIGN KEY (arena) REFERENCES arena(nome),
-     CONSTRAINT FK_artista FOREIGN KEY (artista) REFERENCES cantante(nome),
+     CONSTRAINT FK_artista FOREIGN KEY (artista) REFERENCES artista(nome),
      CONSTRAINT FK_bigl_conc FOREIGN KEY (biglietto) REFERENCES biglietto(id) ON DELETE CASCADE
 );
 
@@ -249,10 +251,10 @@ END;$$
 DELIMITER;
 
 DELIMITER $$
-CREATE PROCEDURE sp_getBigliettiConcertiCantante(IN singer VARCHAR(45))
+CREATE PROCEDURE sp_getBigliettiConcertiArtista(IN singer VARCHAR(45))
 BEGIN
   SELECT count(*) INTO @x FROM concerto WHERE (artista = singer);
-  IF (@x = 0) THEN signal sqlstate '45101' SET message_text = 'Nessun risultato per il cantante indicato';
+  IF (@x = 0) THEN signal sqlstate '45101' SET message_text = 'Nessun risultato per l''artista indicato';
   END IF;
   SELECT data, ora, arena, artista, costo as prezzo,
          (SELECT udf_bigl_status(b.id)) as stato
@@ -266,12 +268,12 @@ DELIMITER;
 DELIMITER $$
 CREATE PROCEDURE sp_getBigliettiConcertiGenere (IN gen VARCHAR(45))
 BEGIN
-  SELECT c2.data,c2.ora,c2.arena,c2.artista,c1.genere,b.costo as prezzo,
+  SELECT c.data,c.ora,c.arena,c.artista,a.genere,b.costo as prezzo,
           (SELECT udf_bigl_status(b.id)) as stato
-  FROM cantante c1 INNER JOIN concerto c2 on c2.artista = c1.nome
-  INNER JOIN biglietto b ON c2.biglietto = b.id
-  WHERE c1.genere = gen
-  ORDER BY c2.data;
+  FROM artista a INNER JOIN concerto c on c.artista = a.nome
+  INNER JOIN biglietto b ON c.biglietto = b.id
+  WHERE a.genere = gen
+  ORDER BY c.data;
 END;$$
 DELIMITER;
 
@@ -433,20 +435,20 @@ VALUES ('Inter','Calcio','Milano'),('Milan','Calcio','Milano'),('Juventus','Calc
        ('Young Boys','Calcio','Berna'),('Malmo','Calcio','Malmo'),('Sheriff','Calcio','Tiraspol'),
        ('Feyenoord','Calcio','Rotterdam');
 
-INSERT INTO cantante
-VALUES ('Eminem','Rap','USA'),('Fabri Fibra','Rap','Italia'),('Sfera Ebbasta','Rap','Italia'),
-       ('Madame','Rap','Italia'), ('Ernia','Rap','Italia'), ('Salmo','Rap','Italia'),('Ghali','Rap','Italia'),
-       ('Blanco','Rap','Italia'),('Elisa','Pop','Italia'),('Tommaso Paradiso','Pop','Italia'),('Jovanotti','Pop','Italia'),
-       ('Laura Pausini','Pop','Italia'),('Emma','Pop','Italia'),('Baby K','Rap','Italia'),('Fedez','Rap','Italia'),
-       ('J-AX','Rap','Italia'),('Maneskin','Rock','Italia'),('Vasco Rossi','Rock','Italia'),('AC-DC','Rock','Australia'),
-       ('Bruce Springsteen','Rock','USA'),('Metallica','Rock','USA'),('Imagine Dragons','Rock','USA'),
-       ('Rolling Stones','Rock','Regno Unito'),('James Blunt','Pop','Regno Unito'),('Ed Sheeran','Pop','Regno Unito'),
-       ('Green Day','Pop','USA'),('Justin Timberlake','Pop','USA'),('Justin Bieber','Pop','Canada'),
-       ('Achille Lauro','Pop','Italia'),('Adele','Pop','USA'),('Alvaro Soler','Pop','Spagna'),
-       ('Avril Lavigne','Pop','USA'),('Bruno Mars','Pop','USA'),('Biagio Antonacci','Pop','Italia'),
-       ('Coldplay','Pop','USA'),('Lady Gaga','Pop','USA'), ('Beyonce','Pop','USA'),('Rihanna','Pop','USA'),
-       ('Macklemore','Rap','USA'),('Snoop Dog','Rap','USA'),('U2','Rock','Irlanda'),('50 Cent','Rap','USA'),
-       ('Rkomi','Rap','Italia'),('Billie Eilish','Pop','USA');
+INSERT INTO artista
+VALUES ('Eminem','Rap','Cantante','USA'),('Fabri Fibra','Rap','Cantante','Italia'),('Sfera Ebbasta','Rap','Cantante','Italia'),
+       ('Madame','Rap','Cantante','Italia'), ('Ernia','Rap','Cantante','Italia'), ('Salmo','Rap','Cantante','Italia'),('Ghali','Rap','Cantante','Italia'),
+       ('Blanco','Rap','Cantante','Italia'),('Elisa','Pop','Cantante','Italia'),('Tommaso Paradiso','Pop','Cantante','Italia'),('Jovanotti','Pop','Cantante','Italia'),
+       ('Laura Pausini','Pop','Cantante','Italia'),('Emma','Pop','Cantante','Italia'),('Baby K','Rap','Cantante','Italia'),('Fedez','Rap','Cantante','Italia'),
+       ('J-AX','Rap','Cantante','Italia'),('Maneskin','Rock','Band','Italia'),('Vasco Rossi','Rock','Cantante','Italia'),('AC-DC','Rock','Band','Australia'),
+       ('Bruce Springsteen','Rock','Cantante','USA'),('Metallica','Rock','Band','USA'),('Imagine Dragons','Rock','Band','USA'),
+       ('Rolling Stones','Rock','Band','Regno Unito'),('James Blunt','Pop','Cantante','Regno Unito'),('Ed Sheeran','Pop','Cantante','Regno Unito'),
+       ('Green Day','Pop','Band','USA'),('Justin Timberlake','Pop','Cantante','USA'),('Justin Bieber','Pop','Cantante','Canada'),
+       ('Achille Lauro','Pop','Cantante','Italia'),('Adele','Pop','Cantante','USA'),('Alvaro Soler','Pop','Cantante','Spagna'),
+       ('Avril Lavigne','Pop','Cantante','USA'),('Bruno Mars','Pop','Cantante','USA'),('Biagio Antonacci','Pop','Cantante','Italia'),
+       ('Coldplay','Pop','Band','USA'),('Lady Gaga','Pop','Cantante','USA'), ('Beyonce','Pop','Cantante','USA'),('Rihanna','Pop','Cantante','USA'),
+       ('Macklemore','Rap','Cantante','USA'),('Snoop Dog','Rap','Cantante','USA'),('U2','Rock','Cantante','Irlanda'),('50 Cent','Rap','Cantante','USA'),
+       ('Rkomi','Rap','Cantante','Italia'),('Billie Eilish','Pop','Cantante','USA');
 
 INSERT INTO biglietto
 VALUES (null,20.00 , 15000),(null,21.00 , 14000),(null,15.00 , 17652), (null,25.00, 42983),(null,15.00 , 17000 ),
@@ -738,6 +740,5 @@ VALUES (null,'ANDRAN88E05F205X',1,now()),(null,'BRDMMM94E05F205X',2,now()),(null
        (null,'MRTMEI89E05F205X',75,now()),(null,'NCLBRL97E05F205X',43,now()),(null,'PIRAUG96E05F205X',57,now()),
        (null,'PTRADR78E05F205X',75,now()),(null,'RBTMNC66E05F205X',43,now()),(null,'SARACQ89E05F205Y',60,now()),
        (null,'SMNDBG86E05F205X',75,now()),(null,'SMNSPZ78E05F205X',23,now()),(null,'STFPON64E05F205X',63,now());
-
 
 
